@@ -45,6 +45,42 @@ async def main():
         # Query the MCP server to pull the available tools (over HTTP streamable interface).
         tools_http = await mcp_server_tools(server_params_http)
 
+        ### STDIO MCP server connection for mcpdoc
+        # The mcpdoc MCP adapter is an MCP server that can retrieve and expose
+        # webpage content (or other documentation sources) as tools. We connect
+        # to it over stdio by launching an executable that implements the MCP
+        # stdio protocol.
+        #
+        # args_stdio_mcpdoc:
+        #  - "--from mcpdoc" identifies the toolset / component name that the
+        #    adapter advertises (used by that adapter internally).
+        #  - "--urls" followed by a URL tells the adapter which pages to fetch
+        #    and index/expose as tools. You can provide different URLs or a file.
+        #  - "--transport stdio" instructs the adapter to use stdio for IPC.
+        #
+        # NOTE: The adapter executable below (uvx_path) must be present on the
+        # filesystem. On Windows, use a raw string (r"") or escaped backslashes.
+        # If you have "uvx" on PATH you can set uvx_path="uvx" instead.
+        args_stdio_mcpdoc = ["--from",
+        "mcpdoc",
+        "mcpdoc",
+        "--urls",
+        "https://langchain-ai.github.io/langgraph/llms.txt",
+        "--transport",
+        "stdio"]
+        uvx_path = r"C:/Users/nabaj/.local/bin/uvx"
+
+        # StdioServerParams launches the command as a subprocess and wires its
+        # stdin/stdout to the MCP client code so tools can be discovered and
+        # invoked over the stdio-based MCP protocol.
+        #
+        # Be aware:
+        #  - If the executable fails to start you'll get an exception here.
+        #  - The subprocess will live for as long as tools from it are used;
+        #    ensure proper shutdown/cleanup in production code.
+        server_params_stdio_mcpdoc = StdioServerParams(command=uvx_path, args=args_stdio_mcpdoc)
+        tools_stdio_mcpdoc = await mcp_server_tools(server_params_stdio_mcpdoc)
+
         ### STDIO-based local MCP server connection
         # Use a local MCP server launched as a subprocess (stdio communication).
         # Adjust the command/args to point to your local stdio MCP server implementation.
@@ -64,6 +100,14 @@ async def main():
             
         )
 
+        # Assistant agent that uses the stdio MCP tools from mcpdoc.
+        mcpdoc_assistant = AssistantAgent(
+            name="mcpdoc_assistant",
+            model_client=llm_client,
+            tools=tools_stdio_mcpdoc,
+            system_message="You are a helpful assistant that can provide information about certain topics by retrieving information for webpages using the mcpdoc MCP server tools."
+        )
+
         # Another assistant agent that uses the HTTP/SSE MCP tools (e.g., min/max finder).
         asseser_assistant = AssistantAgent(
             name="asseser_assistant",
@@ -78,7 +122,7 @@ async def main():
         system_message = (
             """You are a user interacting with an MCP-enabled assistant agent. 
 You can ask the assistant to perform calculations using the calculator assistant tools \
-or find maximum/minimum values using the asseser assistant tools. 
+or find maximum/minimum values using the asseser assistant tools or retrieve information from webpages using the mcpdoc assistant tools. 
 Get the information you need and respond to \
 the user by summarizing the results provided by the assistant.
 """
@@ -99,7 +143,7 @@ the user by summarizing the results provided by the assistant.
         # SelectorGroupChat orchestrates a multi-agent chat where agents can be selected
         # to respond or call tools. Provide the list of agents and the same LLM client used.
         team = SelectorGroupChat(
-            [calculator_assistant, user_proxy, asseser_assistant], 
+            [calculator_assistant, user_proxy, asseser_assistant, mcpdoc_assistant], 
             model_client=llm_client,
             termination_condition=termination
         )
