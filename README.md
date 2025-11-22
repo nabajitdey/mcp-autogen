@@ -21,19 +21,22 @@ This is an async multi-agent demo that connects an LLM client to one or more MCP
    - git clone <repo-url>
    - cd mcp-autogen
 
-2. Create and activate a virtual environment:
+2. Check if you have the mcpdoc directory inside the repo. In case you don't, clone the langchain-ai mcpdoc repo.
+   - `https://github.com/langchain-ai/mcpdoc`
+
+3. Create and activate a virtual environment:
    - python -m venv .venv
    - On Windows: .venv\Scripts\activate
    - On macOS/Linux: source .venv/bin/activate
 
-3. Install dependencies:
+4. Install dependencies:
    - pip install -r requirements.txt 🧩
 
-4. Configure environment variables (create a `.env` file or export):
+5. Configure environment variables (create a `.env` file or export):
    - OPENAI_API_KEY=your_api_key
    - OPENAI_MODEL=gpt-4  # or another compatible model
 
-5. Ensure MCP adapter executables are available:
+6. Ensure MCP adapter executables are available:
    - Update paths in `app.py` for `uvx_path` or the stdio server command (e.g., `"python", ["stdio-mcp-server/app.py"]`) 🔧
 
 ## Running ▶️
