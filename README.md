@@ -1,6 +1,6 @@
 # MCP with Autogen 🎯
 
-This is a very basic implementation of an multi-agent system that connects an Autogen LLM client to one or more MCP (Model Context Protocol) tool servers. You can use it as blueprint for making your MCP workflow from scratch. 🚀
+This is a very basic implementation of a multi-agent system that connects an Autogen LLM client to one or more MCP (Model Context Protocol) tool servers. You can use it as blueprint for making your MCP workflow from scratch. 🚀
 
 ## Features ✨
 - Connect to streamable HTTP/SSE MCP servers to discover and call tools. 🌐
