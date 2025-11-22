@@ -50,7 +50,9 @@ This is an async multi-agent demo that connects an LLM client to one or more MCP
   - Local stdio MCP server command: `python stdio-mcp-server/app.py`
 
 - Try asking questions to the agent ranging from calculations to finding min max of numbers to knowing about different modules of langgraph. You will see the workflow of the LLM tool calls on different MCP servers. Adding some snippets of such conversations here. 
+
 ![alt text](image.png)
+
 ![alt text](image-1.png)
 
 When running, the Console UI streams the team chat. The UserProxy agent can prompt for interactive input via the console. The process stops when the termination token (e.g., `TERMINATION`) is mentioned.
