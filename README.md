@@ -1,6 +1,6 @@
 # MCP with Autogen 🎯
 
-This is an async multi-agent demo that connects an LLM client to one or more MCP (Model Context Protocol) tool servers. It demonstrates using Assistant agents backed by different MCP toolsets (HTTP/SSE and stdio-based adapters) and a UserProxy agent, orchestrated via a SelectorGroupChat with streaming Console output. 🚀
+This is a very basic implementation of an multi-agent system that connects an Autogen LLM client to one or more MCP (Model Context Protocol) tool servers. You can use it as blueprint for making your MCP workflow from scratch. 🚀
 
 ## Features ✨
 - Connect to streamable HTTP/SSE MCP servers to discover and call tools. 🌐
